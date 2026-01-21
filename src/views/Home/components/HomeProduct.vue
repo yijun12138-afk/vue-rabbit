@@ -10,7 +10,7 @@ const getGoods = async () => {
   goodsProduct.value = res.data.result
 }
 onMounted(() => getGoods())
-</script>
+</script> 
 
 <template>
   <div class="home-product">

@@ -9,7 +9,7 @@ defineProps({
     subTitle:{
         type:String
     }
-})
+}) 
 </script>
 
 
