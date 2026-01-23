@@ -1,8 +1,48 @@
 // axios基础的封装
-import axios from 'axios'
+import axios from "axios";
+import { ElMessage } from "element-plus";
+import { useUserStore } from "@/stores/user";
+import router from "@/router";
 const httpInstance = axios.create({
-  baseURL: 'http://pcapi-xiaotuxian-front-devtest.itheima.net',
-  timeout: 5000
-})
+  baseURL: "http://pcapi-xiaotuxian-front-devtest.itheima.net",
+  timeout: 5000,
+});
 
-export default httpInstance
+// axios请求拦截器
+httpInstance.interceptors.request.use(
+  (config) => {
+    // 1. 从pinia获取token数据
+    const userStore = useUserStore();
+    // 2. 按照后端的要求拼接token数据
+    const token = userStore.userInfo.token;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (e) => Promise.reject(e),
+);
+
+// axios响应式拦截器
+httpInstance.interceptors.response.use(
+  (res) => {
+    return {
+      data: res.data,
+    };
+  },
+  (e) => {
+    const userStore = useUserStore();
+    // 统一错误提示 (安全处理：防止 e.response 为空)
+    ElMessage({
+      type: "warning",
+      message: e.response?.data?.message || "请求失败",
+    });
+    if (e.response.status === 401) {
+      userStore.clearUserInfo();
+      router.push("/login");
+    }
+    return Promise.reject(e);
+  },
+);
+
+export default httpInstance;
