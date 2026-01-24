@@ -1,7 +1,7 @@
 <script setup>
 defineProps({
   goods: {
-    type: Object,
+    tppe: Object,
     default: () => { }
   }
 })
@@ -17,7 +17,7 @@ defineProps({
   </RouterLink>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .goods-item {
   display: block;
   width: 220px;
